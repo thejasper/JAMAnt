@@ -25,7 +25,7 @@
 #ifndef MOVEMENT_H
 #define MOVEMENT_H
 
-enum move_turns{TURN_CCW = 1, TURN_CW = -1};
+enum move_turns {TURN_CCW = 1, TURN_CW = -1};
 
 void move_calibrate();
 void move_calibrate2();
