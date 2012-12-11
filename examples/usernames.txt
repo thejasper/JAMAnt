@@ -1,0 +1,28 @@
+[jasper@jasper-laptop ~]$ /opt/lampp/lampp security
+You need to start XAMPP as root!
+[jasper@jasper-laptop ~]$ sudo /opt/lampp/lampp security
+XAMPP: Quick security check...
+XAMPP: Your XAMPP pages are NOT secured by a password.
+XAMPP: Do you want to set a password? [yes] yes
+XAMPP: Password: 
+XAMPP: Password (again): 
+XAMPP: Password protection active. Please use 'lampp' as user name!
+XAMPP: The MySQL/phpMyAdmin user pma has no password set!!!
+XAMPP: Do you want to set a password? [yes] 
+XAMPP: Password: 
+XAMPP: Password (again): 
+XAMPP: Setting new MySQL pma password.
+XAMPP: Setting phpMyAdmin's pma password to the new one.
+XAMPP: MySQL has no root passwort set!!!
+XAMPP: Do you want to set a password? [yes] 
+XAMPP: Write the password somewhere down to make sure you won't forget it!!!
+XAMPP: Password: 
+XAMPP: Password (again): 
+XAMPP: Setting new MySQL root password.
+XAMPP: Change phpMyAdmin's authentication method.
+XAMPP: The FTP password for user 'nobody' is still set to 'lampp'.
+XAMPP: Do you want to change the password? [yes] 
+XAMPP: Password: 
+XAMPP: Password (again): 
+XAMPP: Reload ProFTPD...
+XAMPP: Done.
