@@ -36,9 +36,7 @@ TimeoutSerial::TimeoutSerial(const std::string &devname, unsigned int baud_rate,
                              asio::serial_port_base::stop_bits opt_stop)
     : io(), port(io), timer(io), timeout(posix_time::seconds(0))
 {
-#ifdef CONNECTED
     open(devname, baud_rate, opt_parity, opt_csize, opt_flow, opt_stop);
-#endif
 }
 
 void TimeoutSerial::open(const std::string &devname, unsigned int baud_rate,
@@ -47,7 +45,6 @@ void TimeoutSerial::open(const std::string &devname, unsigned int baud_rate,
                          asio::serial_port_base::flow_control opt_flow,
                          asio::serial_port_base::stop_bits opt_stop)
 {
-#ifdef CONNECTED
     if (isOpen())
         close();
     port.open(devname);
@@ -56,57 +53,41 @@ void TimeoutSerial::open(const std::string &devname, unsigned int baud_rate,
     port.set_option(opt_csize);
     port.set_option(opt_flow);
     port.set_option(opt_stop);
-#endif
 }
 
 bool TimeoutSerial::isOpen() const
 {
-#ifdef CONNECTED
     return port.is_open();
-#else
-    return true;
-#endif
 }
 
 void TimeoutSerial::close()
 {
-#ifdef CONNECTED
     if (isOpen() == false) return;
     port.close();
-#endif
 }
 
 void TimeoutSerial::setTimeout(const posix_time::time_duration &t)
 {
-#ifdef CONNECTED
     timeout = t;
-#endif
 }
 
 void TimeoutSerial::write(const char *data, size_t size)
 {
-#ifdef CONNECTED
     asio::write(port, asio::buffer(data, size));
-#endif
 }
 
 void TimeoutSerial::write(const std::vector<char> &data)
 {
-#ifdef CONNECTED
     asio::write(port, asio::buffer(&data[0], data.size()));
-#endif
 }
 
 void TimeoutSerial::writeString(const std::string &s)
 {
-#ifdef CONNECTED
     asio::write(port, asio::buffer(s.c_str(), s.size()));
-#endif
 }
 
 void TimeoutSerial::read(char *data, size_t size)
 {
-#ifdef CONNECTED
     if (readData.size() > 0) //If there is some data from a previous read
     {
         istream is(&readData);
@@ -149,34 +130,24 @@ void TimeoutSerial::read(char *data, size_t size)
             //if resultInProgress remain in the loop
         }
     }
-#endif
 }
 
 std::vector<char> TimeoutSerial::read(size_t size)
 {
-#ifdef CONNECTED
     vector<char> result(size, '\0'); //Allocate a vector with the desired size
     read(&result[0], size); //Fill it with values
     return result;
-#else
-    return vector<char>();
-#endif
 }
 
 std::string TimeoutSerial::readString(size_t size)
 {
-#ifdef CONNECTED
     string result(size, '\0'); //Allocate a string with the desired size
     read(&result[0], size); //Fill it with values
     return result;
-#else
-    return "";
-#endif
 }
 
 std::string TimeoutSerial::readStringUntil(const std::string &delim)
 {
-#ifdef CONNECTED
     // Note: if readData contains some previously read data, the call to
     // async_read_until (which is done in performReadSetup) correctly handles
     // it. If the data is enough it will also immediately call readCompleted()
@@ -219,16 +190,12 @@ std::string TimeoutSerial::readStringUntil(const std::string &delim)
             //if resultInProgress remain in the loop
         }
     }
-#else
-    return "";
-#endif
 }
 
 TimeoutSerial::~TimeoutSerial() {}
 
 void TimeoutSerial::performReadSetup(const ReadSetupParameters &param)
 {
-#ifdef CONNECTED
     if (param.fixedSize)
     {
         asio::async_read(port, asio::buffer(param.data, param.size), boost::bind(
@@ -241,20 +208,16 @@ void TimeoutSerial::performReadSetup(const ReadSetupParameters &param)
                                    &TimeoutSerial::readCompleted, this, asio::placeholders::error,
                                    asio::placeholders::bytes_transferred));
     }
-#endif
 }
 
 void TimeoutSerial::timeoutExpired(const boost::system::error_code &error)
 {
-#ifdef CONNECTED
     if (!error && result == resultInProgress) result = resultTimeoutExpired;
-#endif
 }
 
 void TimeoutSerial::readCompleted(const boost::system::error_code &error,
                                   const size_t bytesTransferred)
 {
-#ifdef CONNECTED
     if (!error)
     {
         result = resultSuccess;
@@ -279,5 +242,4 @@ void TimeoutSerial::readCompleted(const boost::system::error_code &error,
 #endif
 
     result = resultError;
-#endif
 }

@@ -1,0 +1,17 @@
+
+AntCommunicator // praat over seriele poort (singleton) + in ander thread
+- command
+- serialport
++ init
++ runCommand() // iedere keer wachten op OK
++ setCommand()
++ isConnected() // via filesystem
++ getComPorts() // via filesystem
+
+AntHandler // krijgt commando's binnen, gebruikt AntCommunicator
++ init(AntSettings settings)
++ walk(int speed)
++ turn(int angle)
++ ping()
++ getPorts()
+

@@ -16,11 +16,9 @@ class AntIf {
  public:
   virtual ~AntIf() {}
   virtual bool init(const AntSettings& settings) = 0;
-  virtual bool stop() = 0;
   virtual bool walk(const int32_t speed) = 0;
   virtual bool turn(const int32_t angle) = 0;
-  virtual void getComPorts(std::vector<std::string> & _return, const std::string& wildcard) = 0;
-  virtual int32_t ping() = 0;
+  virtual bool ping() = 0;
 };
 
 class AntIfFactory {
@@ -54,10 +52,6 @@ class AntNull : virtual public AntIf {
     bool _return = false;
     return _return;
   }
-  bool stop() {
-    bool _return = false;
-    return _return;
-  }
   bool walk(const int32_t /* speed */) {
     bool _return = false;
     return _return;
@@ -66,11 +60,8 @@ class AntNull : virtual public AntIf {
     bool _return = false;
     return _return;
   }
-  void getComPorts(std::vector<std::string> & /* _return */, const std::string& /* wildcard */) {
-    return;
-  }
-  int32_t ping() {
-    int32_t _return = 0;
+  bool ping() {
+    bool _return = false;
     return _return;
   }
 };
@@ -178,100 +169,6 @@ class Ant_init_presult {
   bool* success;
 
   _Ant_init_presult__isset __isset;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-
-};
-
-
-class Ant_stop_args {
- public:
-
-  Ant_stop_args() {
-  }
-
-  virtual ~Ant_stop_args() throw() {}
-
-
-  bool operator == (const Ant_stop_args & /* rhs */) const
-  {
-    return true;
-  }
-  bool operator != (const Ant_stop_args &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const Ant_stop_args & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-
-class Ant_stop_pargs {
- public:
-
-
-  virtual ~Ant_stop_pargs() throw() {}
-
-
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-typedef struct _Ant_stop_result__isset {
-  _Ant_stop_result__isset() : success(false) {}
-  bool success;
-} _Ant_stop_result__isset;
-
-class Ant_stop_result {
- public:
-
-  Ant_stop_result() : success(0) {
-  }
-
-  virtual ~Ant_stop_result() throw() {}
-
-  bool success;
-
-  _Ant_stop_result__isset __isset;
-
-  void __set_success(const bool val) {
-    success = val;
-  }
-
-  bool operator == (const Ant_stop_result & rhs) const
-  {
-    if (!(success == rhs.success))
-      return false;
-    return true;
-  }
-  bool operator != (const Ant_stop_result &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const Ant_stop_result & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-typedef struct _Ant_stop_presult__isset {
-  _Ant_stop_presult__isset() : success(false) {}
-  bool success;
-} _Ant_stop_presult__isset;
-
-class Ant_stop_presult {
- public:
-
-
-  virtual ~Ant_stop_presult() throw() {}
-
-  bool* success;
-
-  _Ant_stop_presult__isset __isset;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
 
@@ -493,114 +390,6 @@ class Ant_turn_presult {
 
 };
 
-typedef struct _Ant_getComPorts_args__isset {
-  _Ant_getComPorts_args__isset() : wildcard(false) {}
-  bool wildcard;
-} _Ant_getComPorts_args__isset;
-
-class Ant_getComPorts_args {
- public:
-
-  Ant_getComPorts_args() : wildcard() {
-  }
-
-  virtual ~Ant_getComPorts_args() throw() {}
-
-  std::string wildcard;
-
-  _Ant_getComPorts_args__isset __isset;
-
-  void __set_wildcard(const std::string& val) {
-    wildcard = val;
-  }
-
-  bool operator == (const Ant_getComPorts_args & rhs) const
-  {
-    if (!(wildcard == rhs.wildcard))
-      return false;
-    return true;
-  }
-  bool operator != (const Ant_getComPorts_args &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const Ant_getComPorts_args & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-
-class Ant_getComPorts_pargs {
- public:
-
-
-  virtual ~Ant_getComPorts_pargs() throw() {}
-
-  const std::string* wildcard;
-
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-typedef struct _Ant_getComPorts_result__isset {
-  _Ant_getComPorts_result__isset() : success(false) {}
-  bool success;
-} _Ant_getComPorts_result__isset;
-
-class Ant_getComPorts_result {
- public:
-
-  Ant_getComPorts_result() {
-  }
-
-  virtual ~Ant_getComPorts_result() throw() {}
-
-  std::vector<std::string>  success;
-
-  _Ant_getComPorts_result__isset __isset;
-
-  void __set_success(const std::vector<std::string> & val) {
-    success = val;
-  }
-
-  bool operator == (const Ant_getComPorts_result & rhs) const
-  {
-    if (!(success == rhs.success))
-      return false;
-    return true;
-  }
-  bool operator != (const Ant_getComPorts_result &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const Ant_getComPorts_result & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-typedef struct _Ant_getComPorts_presult__isset {
-  _Ant_getComPorts_presult__isset() : success(false) {}
-  bool success;
-} _Ant_getComPorts_presult__isset;
-
-class Ant_getComPorts_presult {
- public:
-
-
-  virtual ~Ant_getComPorts_presult() throw() {}
-
-  std::vector<std::string> * success;
-
-  _Ant_getComPorts_presult__isset __isset;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-
-};
-
 
 class Ant_ping_args {
  public:
@@ -651,11 +440,11 @@ class Ant_ping_result {
 
   virtual ~Ant_ping_result() throw() {}
 
-  int32_t success;
+  bool success;
 
   _Ant_ping_result__isset __isset;
 
-  void __set_success(const int32_t val) {
+  void __set_success(const bool val) {
     success = val;
   }
 
@@ -687,7 +476,7 @@ class Ant_ping_presult {
 
   virtual ~Ant_ping_presult() throw() {}
 
-  int32_t* success;
+  bool* success;
 
   _Ant_ping_presult__isset __isset;
 
@@ -718,21 +507,15 @@ class AntClient : virtual public AntIf {
   bool init(const AntSettings& settings);
   void send_init(const AntSettings& settings);
   bool recv_init();
-  bool stop();
-  void send_stop();
-  bool recv_stop();
   bool walk(const int32_t speed);
   void send_walk(const int32_t speed);
   bool recv_walk();
   bool turn(const int32_t angle);
   void send_turn(const int32_t angle);
   bool recv_turn();
-  void getComPorts(std::vector<std::string> & _return, const std::string& wildcard);
-  void send_getComPorts(const std::string& wildcard);
-  void recv_getComPorts(std::vector<std::string> & _return);
-  int32_t ping();
+  bool ping();
   void send_ping();
-  int32_t recv_ping();
+  bool recv_ping();
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -749,19 +532,15 @@ class AntProcessor : public ::apache::thrift::TDispatchProcessor {
   typedef std::map<std::string, ProcessFunction> ProcessMap;
   ProcessMap processMap_;
   void process_init(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
-  void process_stop(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_walk(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_turn(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
-  void process_getComPorts(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   AntProcessor(boost::shared_ptr<AntIf> iface) :
     iface_(iface) {
     processMap_["init"] = &AntProcessor::process_init;
-    processMap_["stop"] = &AntProcessor::process_stop;
     processMap_["walk"] = &AntProcessor::process_walk;
     processMap_["turn"] = &AntProcessor::process_turn;
-    processMap_["getComPorts"] = &AntProcessor::process_getComPorts;
     processMap_["ping"] = &AntProcessor::process_ping;
   }
 
@@ -800,15 +579,6 @@ class AntMultiface : virtual public AntIf {
     return ifaces_[i]->init(settings);
   }
 
-  bool stop() {
-    size_t sz = ifaces_.size();
-    size_t i = 0;
-    for (; i < (sz - 1); ++i) {
-      ifaces_[i]->stop();
-    }
-    return ifaces_[i]->stop();
-  }
-
   bool walk(const int32_t speed) {
     size_t sz = ifaces_.size();
     size_t i = 0;
@@ -827,17 +597,7 @@ class AntMultiface : virtual public AntIf {
     return ifaces_[i]->turn(angle);
   }
 
-  void getComPorts(std::vector<std::string> & _return, const std::string& wildcard) {
-    size_t sz = ifaces_.size();
-    size_t i = 0;
-    for (; i < (sz - 1); ++i) {
-      ifaces_[i]->getComPorts(_return, wildcard);
-    }
-    ifaces_[i]->getComPorts(_return, wildcard);
-    return;
-  }
-
-  int32_t ping() {
+  bool ping() {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {

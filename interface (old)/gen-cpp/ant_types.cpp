@@ -10,8 +10,8 @@
 
 namespace robotics {
 
-const char* AntSettings::ascii_fingerprint = "EEBC915CE44901401D881E6091423036";
-const uint8_t AntSettings::binary_fingerprint[16] = {0xEE,0xBC,0x91,0x5C,0xE4,0x49,0x01,0x40,0x1D,0x88,0x1E,0x60,0x91,0x42,0x30,0x36};
+const char* AntSettings::ascii_fingerprint = "18B162B1D15D8D46509D3911A9F1C2AA";
+const uint8_t AntSettings::binary_fingerprint[16] = {0x18,0xB1,0x62,0xB1,0xD1,0x5D,0x8D,0x46,0x50,0x9D,0x39,0x11,0xA9,0xF1,0xC2,0xAA};
 
 uint32_t AntSettings::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -24,6 +24,7 @@ uint32_t AntSettings::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   using ::apache::thrift::protocol::TProtocolException;
 
+  bool isset_port = false;
 
   while (true)
   {
@@ -36,7 +37,7 @@ uint32_t AntSettings::read(::apache::thrift::protocol::TProtocol* iprot) {
       case 1:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
           xfer += iprot->readString(this->port);
-          this->__isset.port = true;
+          isset_port = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -58,6 +59,8 @@ uint32_t AntSettings::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   xfer += iprot->readStructEnd();
 
+  if (!isset_port)
+    throw TProtocolException(TProtocolException::INVALID_DATA);
   return xfer;
 }
 
@@ -69,10 +72,11 @@ uint32_t AntSettings::write(::apache::thrift::protocol::TProtocol* oprot) const 
   xfer += oprot->writeString(this->port);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("baudrate", ::apache::thrift::protocol::T_I32, 2);
-  xfer += oprot->writeI32(this->baudrate);
-  xfer += oprot->writeFieldEnd();
-
+  if (this->__isset.baudrate) {
+    xfer += oprot->writeFieldBegin("baudrate", ::apache::thrift::protocol::T_I32, 2);
+    xfer += oprot->writeI32(this->baudrate);
+    xfer += oprot->writeFieldEnd();
+  }
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;

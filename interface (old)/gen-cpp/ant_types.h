@@ -17,16 +17,15 @@
 namespace robotics {
 
 typedef struct _AntSettings__isset {
-  _AntSettings__isset() : port(false), baudrate(true) {}
-  bool port;
+  _AntSettings__isset() : baudrate(true) {}
   bool baudrate;
 } _AntSettings__isset;
 
 class AntSettings {
  public:
 
-  static const char* ascii_fingerprint; // = "EEBC915CE44901401D881E6091423036";
-  static const uint8_t binary_fingerprint[16]; // = {0xEE,0xBC,0x91,0x5C,0xE4,0x49,0x01,0x40,0x1D,0x88,0x1E,0x60,0x91,0x42,0x30,0x36};
+  static const char* ascii_fingerprint; // = "18B162B1D15D8D46509D3911A9F1C2AA";
+  static const uint8_t binary_fingerprint[16]; // = {0x18,0xB1,0x62,0xB1,0xD1,0x5D,0x8D,0x46,0x50,0x9D,0x39,0x11,0xA9,0xF1,0xC2,0xAA};
 
   AntSettings() : port(), baudrate(115200) {
   }
@@ -44,13 +43,16 @@ class AntSettings {
 
   void __set_baudrate(const int32_t val) {
     baudrate = val;
+    __isset.baudrate = true;
   }
 
   bool operator == (const AntSettings & rhs) const
   {
     if (!(port == rhs.port))
       return false;
-    if (!(baudrate == rhs.baudrate))
+    if (__isset.baudrate != rhs.__isset.baudrate)
+      return false;
+    else if (__isset.baudrate && !(baudrate == rhs.baudrate))
       return false;
     return true;
   }
