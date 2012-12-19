@@ -1,5 +1,5 @@
-CC = g++ -O2 -std=c++11 -lthrift -lpthread -lboost_system -lboost_thread -DHAVE_CONFIG_H
-CFLAGS = -g -c -I/usr/include/thrift/
+CC = g++-4.7 -O2 -std=c++11 -lthrift -lpthread -lboost_system -lboost_thread -DHAVE_CONFIG_H -DCONNECTED
+CFLAGS = -g -c -I/usr/local/include/thrift/
 
 all: antserver
 
