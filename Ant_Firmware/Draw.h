@@ -22,24 +22,33 @@
 #include "Leg.h"
 #include <math.h>
 
-#ifndef MOVEMENT_H
-#define MOVEMENT_H
+#ifndef DRAW_H
+#define DRAW_H
 
-enum move_turns {
-  TURN_CCW = 1, TURN_CW = -1};
-
-void move_calibrate();
-void move_calibrate2();
-void move_updown();
-void move_updownall();
-void move_test();
-void move_collapse();
-void move_expand();
-void move_default();
-void move_walk(int walk_speed, int scale, boolean drop = false);
-void move_turn(int turn_dir, int angle, int turn_speed);
-void move_circle();
-void deviate_from_default_pose(int x, int y, int z);
+const int pose[6][2] = {
+    {154, 169},
+    {0, 228},
+    { -154, 169},
+    {154, -169},
+    {0, -228},
+    { -154, -169}
+};
+const int pose_height = -130;
+  
+class Draw
+{
+public:
+  Draw() : max_x(30), max_y(30), prev_x(0), prev_y(0) {}
+  
+  void convert_coordinates(int screen_x, int screen_y, int* x, int* y);
+  void deviate_from_default_pose(int x, int y, boolean draw);
+  void set_draw_height(int height) { draw_height = height; set_move_height(height + 10); }
+  void set_move_height(int height) { move_height = height; }
+  
+private:
+  int prev_x, prev_y;
+  int max_x, max_y;
+  int draw_height, move_height;
+};
 
 #endif
-

@@ -20,14 +20,16 @@
 
 #include "Leg.h"
 #include "Movement.h"
+#include "Draw.h"
 
 char inc_data = 0;
 String buffer = "";
 int ant_speed = 20;
 boolean drop_MnM = false;
 
-enum ant_action { WALK, TURN, PNG, DRAW, STOP, NOTHING };
-  
+enum ant_action { WALK, TURN, PNG, DRAW, STOP, NOTHING, HEIGHT };
+ 
+Draw draw;                           // alles die te maken heeft met het tekenen
 unsigned int timeout = 2 * 1000;     // langste tijd dat er tussen 2 commando's mag zitten
 boolean in_time = false;             // geeft aan of er een timeout is of niet
 ant_action current_action = NOTHING; // huidige actie (zie declaratie enum)
@@ -87,10 +89,8 @@ void loop()
 
 void process_communication()
 {
-  boolean in_time = millis() - last_ping < timeout;
-  
   // commando inlezen
-  if (Serial.available() > 0)
+  while (Serial.available() > 0)
   {
     inc_data = Serial.read();
     
@@ -103,6 +103,8 @@ void process_communication()
       buffer += inc_data;
   }
   
+  in_time = millis() - last_ping < timeout;
+
   // commando uitvoeren 
   execute_action();
 }
@@ -142,6 +144,12 @@ void interpret_buffer()
     coordinates = buffer.substring(4);
     Serial.println("DRW OK");
   }
+  else if (buffer.startsWith("DST")) // hoogte instellen
+  {
+    current_action = HEIGHT;
+    command_parameter = buffer.substring(4).toInt();
+    Serial.println("DST OK");
+  }
   else // something else
   {
     current_action = NOTHING;
@@ -170,9 +178,42 @@ void execute_action()
   }
   else if (current_action == DRAW)
   {
-    // not implemented
+    int x = get_next_number(coordinates);
+    int y = get_next_number(coordinates);
+
+    draw.convert_coordinates(1000, 1000, &x, &y);
+    draw.deviate_from_default_pose(x, y, true);
+    Serial.print("Received: ");
+    Serial.print(x);
+    Serial.println(y);
+    
     current_action = NOTHING;
     Serial.println("ACTUAL DRW OK");
   }
+  else if (current_action == HEIGHT)
+  {
+    draw.set_draw_height(command_parameter);
+    draw.deviate_from_default_pose(0, 0, true);
+    
+    current_action = NOTHING;
+    Serial.println("ACTUAL DST OK");
+  }
+  
+  Serial.flush();
 }
 
+int get_next_number(String& s)
+{
+  int num = -1, commaPos = s.indexOf(',');
+  if (commaPos != -1)
+  {
+    num = s.substring(0, commaPos).toInt();
+    s = s.substring(commaPos+1, s.length());
+  }
+  else if (s.length() > 0)
+  {
+    num = s.toInt();
+    s = "";
+  }
+  return num;
+}
