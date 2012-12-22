@@ -19,6 +19,7 @@ class AntIf {
   virtual bool stop() = 0;
   virtual bool walk(const int32_t speed) = 0;
   virtual bool turn(const int32_t angle) = 0;
+  virtual bool draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height) = 0;
   virtual void getComPorts(std::vector<std::string> & _return, const std::string& wildcard) = 0;
   virtual int32_t ping() = 0;
 };
@@ -63,6 +64,10 @@ class AntNull : virtual public AntIf {
     return _return;
   }
   bool turn(const int32_t /* angle */) {
+    bool _return = false;
+    return _return;
+  }
+  bool draw(const std::vector<std::vector<int32_t> > & /* points */, const int32_t /* width */, const int32_t /* height */) {
     bool _return = false;
     return _return;
   }
@@ -493,15 +498,141 @@ class Ant_turn_presult {
 
 };
 
+typedef struct _Ant_draw_args__isset {
+  _Ant_draw_args__isset() : points(false), width(false), height(false) {}
+  bool points;
+  bool width;
+  bool height;
+} _Ant_draw_args__isset;
+
+class Ant_draw_args {
+ public:
+
+  Ant_draw_args() : width(0), height(0) {
+  }
+
+  virtual ~Ant_draw_args() throw() {}
+
+  std::vector<std::vector<int32_t> >  points;
+  int32_t width;
+  int32_t height;
+
+  _Ant_draw_args__isset __isset;
+
+  void __set_points(const std::vector<std::vector<int32_t> > & val) {
+    points = val;
+  }
+
+  void __set_width(const int32_t val) {
+    width = val;
+  }
+
+  void __set_height(const int32_t val) {
+    height = val;
+  }
+
+  bool operator == (const Ant_draw_args & rhs) const
+  {
+    if (!(points == rhs.points))
+      return false;
+    if (!(width == rhs.width))
+      return false;
+    if (!(height == rhs.height))
+      return false;
+    return true;
+  }
+  bool operator != (const Ant_draw_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Ant_draw_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class Ant_draw_pargs {
+ public:
+
+
+  virtual ~Ant_draw_pargs() throw() {}
+
+  const std::vector<std::vector<int32_t> > * points;
+  const int32_t* width;
+  const int32_t* height;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _Ant_draw_result__isset {
+  _Ant_draw_result__isset() : success(false) {}
+  bool success;
+} _Ant_draw_result__isset;
+
+class Ant_draw_result {
+ public:
+
+  Ant_draw_result() : success(0) {
+  }
+
+  virtual ~Ant_draw_result() throw() {}
+
+  bool success;
+
+  _Ant_draw_result__isset __isset;
+
+  void __set_success(const bool val) {
+    success = val;
+  }
+
+  bool operator == (const Ant_draw_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    return true;
+  }
+  bool operator != (const Ant_draw_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Ant_draw_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _Ant_draw_presult__isset {
+  _Ant_draw_presult__isset() : success(false) {}
+  bool success;
+} _Ant_draw_presult__isset;
+
+class Ant_draw_presult {
+ public:
+
+
+  virtual ~Ant_draw_presult() throw() {}
+
+  bool* success;
+
+  _Ant_draw_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
 typedef struct _Ant_getComPorts_args__isset {
-  _Ant_getComPorts_args__isset() : wildcard(false) {}
+  _Ant_getComPorts_args__isset() : wildcard(true) {}
   bool wildcard;
 } _Ant_getComPorts_args__isset;
 
 class Ant_getComPorts_args {
  public:
 
-  Ant_getComPorts_args() : wildcard() {
+  Ant_getComPorts_args() : wildcard("/dev/ttyACM*") {
   }
 
   virtual ~Ant_getComPorts_args() throw() {}
@@ -727,6 +858,9 @@ class AntClient : virtual public AntIf {
   bool turn(const int32_t angle);
   void send_turn(const int32_t angle);
   bool recv_turn();
+  bool draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height);
+  void send_draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height);
+  bool recv_draw();
   void getComPorts(std::vector<std::string> & _return, const std::string& wildcard);
   void send_getComPorts(const std::string& wildcard);
   void recv_getComPorts(std::vector<std::string> & _return);
@@ -752,6 +886,7 @@ class AntProcessor : public ::apache::thrift::TDispatchProcessor {
   void process_stop(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_walk(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_turn(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_draw(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_getComPorts(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
@@ -761,6 +896,7 @@ class AntProcessor : public ::apache::thrift::TDispatchProcessor {
     processMap_["stop"] = &AntProcessor::process_stop;
     processMap_["walk"] = &AntProcessor::process_walk;
     processMap_["turn"] = &AntProcessor::process_turn;
+    processMap_["draw"] = &AntProcessor::process_draw;
     processMap_["getComPorts"] = &AntProcessor::process_getComPorts;
     processMap_["ping"] = &AntProcessor::process_ping;
   }
@@ -825,6 +961,15 @@ class AntMultiface : virtual public AntIf {
       ifaces_[i]->turn(angle);
     }
     return ifaces_[i]->turn(angle);
+  }
+
+  bool draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->draw(points, width, height);
+    }
+    return ifaces_[i]->draw(points, width, height);
   }
 
   void getComPorts(std::vector<std::string> & _return, const std::string& wildcard) {

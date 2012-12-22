@@ -20,6 +20,7 @@ interface AntIf {
   public function stop();
   public function walk($speed);
   public function turn($angle);
+  public function draw($points, $width, $height);
   public function getComPorts($wildcard);
   public function ping();
 }
@@ -236,6 +237,59 @@ class AntClient implements \robotics\AntIf {
       return $result->success;
     }
     throw new \Exception("turn failed: unknown result");
+  }
+
+  public function draw($points, $width, $height)
+  {
+    $this->send_draw($points, $width, $height);
+    return $this->recv_draw();
+  }
+
+  public function send_draw($points, $width, $height)
+  {
+    $args = new \robotics\Ant_draw_args();
+    $args->points = $points;
+    $args->width = $width;
+    $args->height = $height;
+    $bin_accel = ($this->output_ instanceof TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_write_binary');
+    if ($bin_accel)
+    {
+      thrift_protocol_write_binary($this->output_, 'draw', TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+    }
+    else
+    {
+      $this->output_->writeMessageBegin('draw', TMessageType::CALL, $this->seqid_);
+      $args->write($this->output_);
+      $this->output_->writeMessageEnd();
+      $this->output_->getTransport()->flush();
+    }
+  }
+
+  public function recv_draw()
+  {
+    $bin_accel = ($this->input_ instanceof TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_read_binary');
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\robotics\Ant_draw_result', $this->input_->isStrictRead());
+    else
+    {
+      $rseqid = 0;
+      $fname = null;
+      $mtype = 0;
+
+      $this->input_->readMessageBegin($fname, $mtype, $rseqid);
+      if ($mtype == TMessageType::EXCEPTION) {
+        $x = new TApplicationException();
+        $x->read($this->input_);
+        $this->input_->readMessageEnd();
+        throw $x;
+      }
+      $result = new \robotics\Ant_draw_result();
+      $result->read($this->input_);
+      $this->input_->readMessageEnd();
+    }
+    if ($result->success !== null) {
+      return $result->success;
+    }
+    throw new \Exception("draw failed: unknown result");
   }
 
   public function getComPorts($wildcard)
@@ -902,10 +956,243 @@ class Ant_turn_result {
 
 }
 
+class Ant_draw_args {
+  static $_TSPEC;
+
+  public $points = null;
+  public $width = null;
+  public $height = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'points',
+          'type' => TType::LST,
+          'etype' => TType::LST,
+          'elem' => array(
+            'type' => TType::LST,
+            'etype' => TType::I32,
+            'elem' => array(
+              'type' => TType::I32,
+              ),
+            ),
+          ),
+        2 => array(
+          'var' => 'width',
+          'type' => TType::I32,
+          ),
+        3 => array(
+          'var' => 'height',
+          'type' => TType::I32,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['points'])) {
+        $this->points = $vals['points'];
+      }
+      if (isset($vals['width'])) {
+        $this->width = $vals['width'];
+      }
+      if (isset($vals['height'])) {
+        $this->height = $vals['height'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'Ant_draw_args';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == TType::LST) {
+            $this->points = array();
+            $_size0 = 0;
+            $_etype3 = 0;
+            $xfer += $input->readListBegin($_etype3, $_size0);
+            for ($_i4 = 0; $_i4 < $_size0; ++$_i4)
+            {
+              $elem5 = null;
+              $elem5 = array();
+              $_size6 = 0;
+              $_etype9 = 0;
+              $xfer += $input->readListBegin($_etype9, $_size6);
+              for ($_i10 = 0; $_i10 < $_size6; ++$_i10)
+              {
+                $elem11 = null;
+                $xfer += $input->readI32($elem11);
+                $elem5 []= $elem11;
+              }
+              $xfer += $input->readListEnd();
+              $this->points []= $elem5;
+            }
+            $xfer += $input->readListEnd();
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == TType::I32) {
+            $xfer += $input->readI32($this->width);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 3:
+          if ($ftype == TType::I32) {
+            $xfer += $input->readI32($this->height);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('Ant_draw_args');
+    if ($this->points !== null) {
+      if (!is_array($this->points)) {
+        throw new TProtocolException('Bad type in structure.', TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('points', TType::LST, 1);
+      {
+        $output->writeListBegin(TType::LST, count($this->points));
+        {
+          foreach ($this->points as $iter12)
+          {
+            {
+              $output->writeListBegin(TType::I32, count($iter12));
+              {
+                foreach ($iter12 as $iter13)
+                {
+                  $xfer += $output->writeI32($iter13);
+                }
+              }
+              $output->writeListEnd();
+            }
+          }
+        }
+        $output->writeListEnd();
+      }
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->width !== null) {
+      $xfer += $output->writeFieldBegin('width', TType::I32, 2);
+      $xfer += $output->writeI32($this->width);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->height !== null) {
+      $xfer += $output->writeFieldBegin('height', TType::I32, 3);
+      $xfer += $output->writeI32($this->height);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class Ant_draw_result {
+  static $_TSPEC;
+
+  public $success = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        0 => array(
+          'var' => 'success',
+          'type' => TType::BOOL,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['success'])) {
+        $this->success = $vals['success'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'Ant_draw_result';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 0:
+          if ($ftype == TType::BOOL) {
+            $xfer += $input->readBool($this->success);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('Ant_draw_result');
+    if ($this->success !== null) {
+      $xfer += $output->writeFieldBegin('success', TType::BOOL, 0);
+      $xfer += $output->writeBool($this->success);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
 class Ant_getComPorts_args {
   static $_TSPEC;
 
-  public $wildcard = null;
+  public $wildcard = "/dev/ttyACM*";
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -1021,14 +1308,14 @@ class Ant_getComPorts_result {
         case 0:
           if ($ftype == TType::LST) {
             $this->success = array();
-            $_size0 = 0;
-            $_etype3 = 0;
-            $xfer += $input->readListBegin($_etype3, $_size0);
-            for ($_i4 = 0; $_i4 < $_size0; ++$_i4)
+            $_size14 = 0;
+            $_etype17 = 0;
+            $xfer += $input->readListBegin($_etype17, $_size14);
+            for ($_i18 = 0; $_i18 < $_size14; ++$_i18)
             {
-              $elem5 = null;
-              $xfer += $input->readString($elem5);
-              $this->success []= $elem5;
+              $elem19 = null;
+              $xfer += $input->readString($elem19);
+              $this->success []= $elem19;
             }
             $xfer += $input->readListEnd();
           } else {
@@ -1056,9 +1343,9 @@ class Ant_getComPorts_result {
       {
         $output->writeListBegin(TType::STRING, count($this->success));
         {
-          foreach ($this->success as $iter6)
+          foreach ($this->success as $iter20)
           {
-            $xfer += $output->writeString($iter6);
+            $xfer += $output->writeString($iter20);
           }
         }
         $output->writeListEnd();
