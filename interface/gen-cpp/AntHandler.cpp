@@ -133,6 +133,8 @@ public:
 
         serial.writeString("PNG\n");
 
+        //std::cout << serial.readStringUntil() << std::endl;
+
         //return 1; // timeout
         return 2; // connected
     }
@@ -148,12 +150,15 @@ void localTest()
     AntHandler ant;
     ant.init(settings);
 
-    ant.walk(10);
-    
-    std::vector<int32_t> line1 = {2, 3, 5, 6};
-    std::vector<int32_t> line2 = {2, 3, 5, 6, 7, 8};
-    std::vector<std::vector<int32_t> > points = {line1, line2};
-    ant.draw(points, 800, 600);
+    //int ret = ant.ping();
+    //std::cout << ret << std::endl;
+
+//    ant.walk(10);
+//    
+//    std::vector<int32_t> line1 = {2, 3, 5, 6};
+//    std::vector<int32_t> line2 = {2, 3, 5, 6, 7, 8};
+//    std::vector<std::vector<int32_t> > points = {line1, line2};
+//    ant.draw(points, 800, 600);
 }
 
 int main(int argc, char **argv)
