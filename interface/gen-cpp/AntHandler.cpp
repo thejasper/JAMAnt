@@ -1,3 +1,4 @@
+#include <csignal>
 #include "Ant.h"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
