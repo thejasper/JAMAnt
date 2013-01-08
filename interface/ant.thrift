@@ -20,6 +20,9 @@ service Ant
     // angle tussen -45 en 45 graden
     bool turn(1:i32 angle),
 
+	// tekenhoogte instellen 
+    bool calibrateHeight(1:i32 height),
+
     // points zijn de x en y coordinaten van verschillende aaneensluitende lijnen
     // width en height is de resolutie van de client
     bool draw(1:list<list<i32>> points, 2:i32 width, 3:i32 height),

@@ -19,6 +19,7 @@ class AntIf {
   virtual bool stop() = 0;
   virtual bool walk(const int32_t speed) = 0;
   virtual bool turn(const int32_t angle) = 0;
+  virtual bool calibrateHeight(const int32_t height) = 0;
   virtual bool draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height) = 0;
   virtual void getComPorts(std::vector<std::string> & _return, const std::string& wildcard) = 0;
   virtual int32_t ping() = 0;
@@ -64,6 +65,10 @@ class AntNull : virtual public AntIf {
     return _return;
   }
   bool turn(const int32_t /* angle */) {
+    bool _return = false;
+    return _return;
+  }
+  bool calibrateHeight(const int32_t /* height */) {
     bool _return = false;
     return _return;
   }
@@ -498,6 +503,114 @@ class Ant_turn_presult {
 
 };
 
+typedef struct _Ant_calibrateHeight_args__isset {
+  _Ant_calibrateHeight_args__isset() : height(false) {}
+  bool height;
+} _Ant_calibrateHeight_args__isset;
+
+class Ant_calibrateHeight_args {
+ public:
+
+  Ant_calibrateHeight_args() : height(0) {
+  }
+
+  virtual ~Ant_calibrateHeight_args() throw() {}
+
+  int32_t height;
+
+  _Ant_calibrateHeight_args__isset __isset;
+
+  void __set_height(const int32_t val) {
+    height = val;
+  }
+
+  bool operator == (const Ant_calibrateHeight_args & rhs) const
+  {
+    if (!(height == rhs.height))
+      return false;
+    return true;
+  }
+  bool operator != (const Ant_calibrateHeight_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Ant_calibrateHeight_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class Ant_calibrateHeight_pargs {
+ public:
+
+
+  virtual ~Ant_calibrateHeight_pargs() throw() {}
+
+  const int32_t* height;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _Ant_calibrateHeight_result__isset {
+  _Ant_calibrateHeight_result__isset() : success(false) {}
+  bool success;
+} _Ant_calibrateHeight_result__isset;
+
+class Ant_calibrateHeight_result {
+ public:
+
+  Ant_calibrateHeight_result() : success(0) {
+  }
+
+  virtual ~Ant_calibrateHeight_result() throw() {}
+
+  bool success;
+
+  _Ant_calibrateHeight_result__isset __isset;
+
+  void __set_success(const bool val) {
+    success = val;
+  }
+
+  bool operator == (const Ant_calibrateHeight_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    return true;
+  }
+  bool operator != (const Ant_calibrateHeight_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Ant_calibrateHeight_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _Ant_calibrateHeight_presult__isset {
+  _Ant_calibrateHeight_presult__isset() : success(false) {}
+  bool success;
+} _Ant_calibrateHeight_presult__isset;
+
+class Ant_calibrateHeight_presult {
+ public:
+
+
+  virtual ~Ant_calibrateHeight_presult() throw() {}
+
+  bool* success;
+
+  _Ant_calibrateHeight_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
 typedef struct _Ant_draw_args__isset {
   _Ant_draw_args__isset() : points(false), width(false), height(false) {}
   bool points;
@@ -858,6 +971,9 @@ class AntClient : virtual public AntIf {
   bool turn(const int32_t angle);
   void send_turn(const int32_t angle);
   bool recv_turn();
+  bool calibrateHeight(const int32_t height);
+  void send_calibrateHeight(const int32_t height);
+  bool recv_calibrateHeight();
   bool draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height);
   void send_draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height);
   bool recv_draw();
@@ -886,6 +1002,7 @@ class AntProcessor : public ::apache::thrift::TDispatchProcessor {
   void process_stop(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_walk(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_turn(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_calibrateHeight(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_draw(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_getComPorts(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
   void process_ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
@@ -896,6 +1013,7 @@ class AntProcessor : public ::apache::thrift::TDispatchProcessor {
     processMap_["stop"] = &AntProcessor::process_stop;
     processMap_["walk"] = &AntProcessor::process_walk;
     processMap_["turn"] = &AntProcessor::process_turn;
+    processMap_["calibrateHeight"] = &AntProcessor::process_calibrateHeight;
     processMap_["draw"] = &AntProcessor::process_draw;
     processMap_["getComPorts"] = &AntProcessor::process_getComPorts;
     processMap_["ping"] = &AntProcessor::process_ping;
@@ -961,6 +1079,15 @@ class AntMultiface : virtual public AntIf {
       ifaces_[i]->turn(angle);
     }
     return ifaces_[i]->turn(angle);
+  }
+
+  bool calibrateHeight(const int32_t height) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->calibrateHeight(height);
+    }
+    return ifaces_[i]->calibrateHeight(height);
   }
 
   bool draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height) {

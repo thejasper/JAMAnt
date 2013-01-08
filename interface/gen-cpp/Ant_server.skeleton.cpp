@@ -42,6 +42,11 @@ class AntHandler : virtual public AntIf {
     printf("turn\n");
   }
 
+  bool calibrateHeight(const int32_t height) {
+    // Your implementation goes here
+    printf("calibrateHeight\n");
+  }
+
   bool draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height) {
     // Your implementation goes here
     printf("draw\n");
