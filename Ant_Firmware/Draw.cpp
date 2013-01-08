@@ -28,10 +28,10 @@ void Draw::convert_coordinates(int screen_x, int screen_y, int* x, int* y)
   *y = (*y * max_y) / (screen_y / 2) - max_y;
 }
 
-void Draw::deviate_from_default_pose(int x, int y, boolean draw)
+void Draw::deviate_from_default_pose(int x, int y, int z)
 {
   // x en y tussen [-30..30], z bepaalt de hoogte
-  int z = draw ? draw_height : move_height;
+  //int z = draw ? draw_height : move_height;
   
   // tussen 0 en 84 als er tussen [-30..30] gewerkt wordt
   double dist = sqrt(sq(x-prev_x)+sq(y-prev_y)); 

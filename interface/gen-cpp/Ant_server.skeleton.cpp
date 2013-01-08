@@ -16,63 +16,64 @@ using boost::shared_ptr;
 
 using namespace  ::robotics;
 
-class AntHandler : virtual public AntIf
-{
-public:
-    AntHandler()
-    {
-        // Your initialization goes here
-    }
+class AntHandler : virtual public AntIf {
+ public:
+  AntHandler() {
+    // Your initialization goes here
+  }
 
-    bool init(const AntSettings &settings)
-    {
-        // Your implementation goes here
-        printf("init\n");
-    }
+  bool init(const AntSettings& settings) {
+    // Your implementation goes here
+    printf("init\n");
+  }
 
-    bool stop()
-    {
-        // Your implementation goes here
-        printf("stop\n");
-    }
+  bool stop() {
+    // Your implementation goes here
+    printf("stop\n");
+  }
 
-    bool walk(const int32_t speed)
-    {
-        // Your implementation goes here
-        printf("walk\n");
-    }
+  bool walk(const int32_t speed) {
+    // Your implementation goes here
+    printf("walk\n");
+  }
 
-    bool turn(const int32_t angle)
-    {
-        // Your implementation goes here
-        printf("turn\n");
-    }
+  bool turn(const int32_t angle) {
+    // Your implementation goes here
+    printf("turn\n");
+  }
 
-    void getComPorts(std::vector<std::string> &_return, const std::string &wildcard)
-    {
-        // Your implementation goes here
-        printf("getComPorts\n");
-    }
+  bool calibrateHeight(const int32_t height) {
+    // Your implementation goes here
+    printf("calibrateHeight\n");
+  }
 
-    int32_t ping()
-    {
-        // Your implementation goes here
-        printf("ping\n");
-    }
+  bool draw(const std::vector<std::vector<int32_t> > & points, const int32_t width, const int32_t height) {
+    // Your implementation goes here
+    printf("draw\n");
+  }
+
+  void getComPorts(std::vector<std::string> & _return, const std::string& wildcard) {
+    // Your implementation goes here
+    printf("getComPorts\n");
+  }
+
+  int32_t ping() {
+    // Your implementation goes here
+    printf("ping\n");
+  }
 
 };
 
-int main(int argc, char **argv)
-{
-    int port = 9090;
-    shared_ptr<AntHandler> handler(new AntHandler());
-    shared_ptr<TProcessor> processor(new AntProcessor(handler));
-    shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
-    shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
-    shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+int main(int argc, char **argv) {
+  int port = 9090;
+  shared_ptr<AntHandler> handler(new AntHandler());
+  shared_ptr<TProcessor> processor(new AntProcessor(handler));
+  shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
+  shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+  shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
-    TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
-    server.serve();
-    return 0;
+  TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+  server.serve();
+  return 0;
 }
 

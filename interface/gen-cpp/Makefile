@@ -1,23 +1,20 @@
-# raspberry pi
+# voor raspberry pi
 #CC = g++-4.7 -O2 -std=c++11 -lthrift -lpthread -lboost_system -lboost_thread -DHAVE_CONFIG_H -DCONNECTED
 #CFLAGS = -g -c -I/usr/local/include/thrift/
-# arch linux
-CC = g++ -O2 -std=c++11 -lthrift -lpthread -lboost_system -lboost_thread -DHAVE_CONFIG_H -DLOCALTEST
+# voor arch linux (m'n laptop)
+CC = g++ -O2 -std=c++11 -lthrift -lpthread -lboost_system -lboost_thread -DHAVE_CONFIG_H -DLOCALTEST -DCONNECTED
 CFLAGS = -g -c -I/usr/include/thrift/
 
 all: antserver
 
-antserver: Ant.o AntHandler.o TimeoutSerial.o ant_constants.o ant_types.o
-	$(CC) Ant.o AntHandler.o TimeoutSerial.o ant_constants.o ant_types.o -o antserver
+antserver: Ant.o AntHandler.o ant_constants.o ant_types.o
+	$(CC) Ant.o AntHandler.o ant_constants.o ant_types.o -o antserver
 
 Ant.o: Ant.cpp 
 	$(CC) $(CFLAGS) Ant.cpp
 
-AntHandler.o: AntHandler.cpp 
+AntHandler.o: AntHandler.cpp rs232.h
 	$(CC) $(CFLAGS) AntHandler.cpp
-
-TimeoutSerial.o: TimeoutSerial.cpp
-	$(CC) $(CFLAGS) TimeoutSerial.cpp
 
 ant_constants.o: ant_constants.cpp
 	$(CC) $(CFLAGS) ant_constants.cpp

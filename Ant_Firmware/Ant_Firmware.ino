@@ -27,7 +27,7 @@ String buffer = "";
 int ant_speed = 20;
 boolean drop_MnM = false;
 
-enum ant_action { WALK, TURN, PNG, DRAW, STOP, NOTHING, HEIGHT };
+enum ant_action { WALK, TURN, PNG, DRAW, MOVE, STOP, NOTHING, HEIGHT };
  
 Draw draw;                           // alles die te maken heeft met het tekenen
 unsigned int timeout = 2 * 1000;     // langste tijd dat er tussen 2 commando's mag zitten
@@ -36,6 +36,8 @@ ant_action current_action = NOTHING; // huidige actie (zie declaratie enum)
 int command_parameter = 0;           // extra informatie voor de huidige actie
 unsigned long last_ping = 0;         // laatste ping in milliseconden
 String coordinates = "";             // coordinaten voor de tekenopdracht
+String movepoints = "";              // x,y,z om te tekenen
+int width = 1000, height = 1000;     // resolutie van de client
 
 // Define legs with correct pins
 Leg legs[6] =
@@ -144,6 +146,12 @@ void interpret_buffer()
     coordinates = buffer.substring(4);
     Serial.println("DRW OK");
   }
+  else if (buffer.startsWith("MOV ")) // move
+  {
+    current_action = MOVE;
+    movepoints = buffer.substring(4);
+    //Serial.println("MOV OK");
+  }
   else if (buffer.startsWith("DST")) // hoogte instellen
   {
     current_action = HEIGHT;
@@ -163,40 +171,47 @@ void execute_action()
   {
     move_default();
     current_action = NOTHING;
-    Serial.println("ACTUAL STP OK");
+    //Serial.println("ACTUAL STP OK");
   }
   else if (current_action == WALK && in_time) 
   {
     move_walk(ant_speed, command_parameter);
-    Serial.println("ACTUAL WLK OK");
+    //Serial.println("ACTUAL WLK OK");
   }
   else if (current_action == TURN && in_time) 
   {
     int dir = command_parameter > 0 ? TURN_CCW : TURN_CW;
     move_turn(dir, abs(command_parameter), ant_speed);
-    Serial.println("ACTUAL TRN OK");
+    //Serial.println("ACTUAL TRN OK");
   }
   else if (current_action == DRAW)
   {
-    int x = get_next_number(coordinates);
-    int y = get_next_number(coordinates);
-
-    draw.convert_coordinates(1000, 1000, &x, &y);
-    draw.deviate_from_default_pose(x, y, true);
-    Serial.print("Received: ");
-    Serial.print(x);
-    Serial.println(y);
+    width = get_next_number(coordinates);
+    height = get_next_number(coordinates);
     
     current_action = NOTHING;
-    Serial.println("ACTUAL DRW OK");
+    //Serial.println("ACTUAL DRW OK");
+  }
+  else if (current_action == MOVE)
+  {
+    int x = get_next_number(movepoints);
+    int y = get_next_number(movepoints);
+    int z = get_next_number(movepoints);
+    
+    // scalen en moven
+    draw.convert_coordinates(width, height, &x, &y);
+    draw.deviate_from_default_pose(x, y, z);
+    
+    current_action = NOTHING;
+    Serial.println("MOV OK");
   }
   else if (current_action == HEIGHT)
   {
-    draw.set_draw_height(command_parameter);
-    draw.deviate_from_default_pose(0, 0, true);
+    //draw.set_draw_height(command_parameter);
+    draw.deviate_from_default_pose(0, 0, command_parameter);
     
     current_action = NOTHING;
-    Serial.println("ACTUAL DST OK");
+    //Serial.println("ACTUAL DST OK");
   }
   
   Serial.flush();
