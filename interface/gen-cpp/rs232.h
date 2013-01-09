@@ -39,7 +39,7 @@ int OpenComport(int comport_number, int baudrate)
 
     if ((comport_number > 27) || (comport_number < 0))
     {
-        printf("illegal comport number\n");
+        //printf("illegal comport number\n");
         return(1);
     }
 
@@ -115,7 +115,7 @@ int OpenComport(int comport_number, int baudrate)
         baudr = B1000000;
         break;
     default      :
-        printf("invalid baudrate\n");
+        //printf("invalid baudrate\n");
         return 1;
         break;
     }
@@ -123,7 +123,7 @@ int OpenComport(int comport_number, int baudrate)
     Cport[comport_number] = open(comports[comport_number], O_RDWR | O_NOCTTY | O_NDELAY);
     if (Cport[comport_number] == -1)
     {
-        perror("unable to open comport ");
+        //perror("unable to open comport ");
         return(1);
     }
 
@@ -131,7 +131,7 @@ int OpenComport(int comport_number, int baudrate)
     if (error == -1)
     {
         close(Cport[comport_number]);
-        perror("unable to read portsettings ");
+        //perror("unable to read portsettings ");
         return 1;
     }
 
@@ -147,7 +147,7 @@ int OpenComport(int comport_number, int baudrate)
     if (error == -1)
     {
         close(Cport[comport_number]);
-        perror("unable to adjust portsettings ");
+        //perror("unable to adjust portsettings ");
         return 1;
     }
 

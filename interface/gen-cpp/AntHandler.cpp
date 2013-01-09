@@ -6,22 +6,23 @@
 #include <thrift/transport/TBufferTransports.h>
 #include <boost/algorithm/string.hpp>
 
-#include <string>
 #include <sstream>
+#include <stdio.h>
+#include <string>
 #include <thread>
 #include <unistd.h>
 
 #include "rs232.h"
 
-//#define red     "\033[0;31m"  
-//#define cyan    "\033[1;36m" 
-//#define green   "\033[4;32m"
-//#define blue    "\033[9;34m"
-//#define black   "\033[0;30m"
-//#define brown   "\033[0;33m"
-//#define magenta "\033[0;35m"
-//#define gray    "\033[0;37m"
-//#define normal  "\033[0m" 
+#define red     "\033[1;31m"       
+#define cyan    "\033[1;36m"       
+#define green   "\033[1;32m"       
+#define blue    "\033[1;34m"       
+#define black   "\033[1;30m"
+#define brown   "\033[1;33m"
+#define magenta "\033[1;35m"
+#define gray    "\033[1;37m"
+#define normal  "\033[0m"        
 
 using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
@@ -44,19 +45,16 @@ private:
 
     void clearReceiveBuffer()
     {
-        while (1)
-        {
-            // lezen tot er niets meer is
-            int n = PollComport(portNumber, rcv, SIZE - 1);
-            rcv[SIZE-1] = 0;
-
-            if (n <= 0)
-                break;
-        }
+        // lezen tot er niets meer is
+        while (PollComport(portNumber, rcv, SIZE - 1) > 0);
     }
 
     std::string readString(int timeout = 10)
     {
+        // direct returnen als hij niet verbonden is, anders blockt de read
+        if (!connected())
+            return "";
+
         std::string res;
         int tried = 0;
 
@@ -66,10 +64,12 @@ private:
 
             // inlezen
             int n = PollComport(portNumber, rcv, SIZE - 1);
-            rcv[SIZE-1] = 0;
 
             if (n > 0)
+            {
+                rcv[n] = 0;
                 res += reinterpret_cast<const char*>(rcv);
+            }
 
             // stoppen als de timeout verstreken is
             if (tried == timeout)
@@ -83,12 +83,18 @@ private:
             usleep(100000);
         }
 
-        std::cout << res << std::endl;
+        //std::cout << res << std::endl;
         return res;
     }
 
     bool sendString(std::string s)
     {
+        std::string msg = "Sending.. " + s;
+        printf("%s%s%s", cyan, msg.c_str(), normal);
+
+        if (!connected())
+            return false;
+
         // string verzenden, maar voor de zekerheid eerst buffer legen zodat
         // we weten dat de volgende ontvangen string het resultaat is van deze schrijfactie
         clearReceiveBuffer();
@@ -99,37 +105,49 @@ private:
     {
         // verzend commando
         if (sendString(s))
-            return false;
+            return print(false, "Commando kon niet worden verzonden\n");
 
         // kijk of het verwachte antwoord werd teruggestuurd
         if (readString().find(answer) == std::string::npos)
-            return false;
+            return print(false, "Geen reactie op commando\n");
 
-        return true;
+        return print(true, "OK\n");
     }
 
     bool move(int x, int y, int z)
     {
         std::ostringstream ss;
         ss << "MOV " << x << ',' << y << ',' << z << '\n';
-        std::cout << ss.str() << std::endl;
+        //std::cout << ss.str() << std::endl;
 
         return sendCommand(ss.str(), "MOV OK");
     }
 
     void printHeader(std::string message)
     {
-//        printf("%s%s%s\n", cyan, message.c_str(), normal);
+        printf("%s***%s***%s\n", blue, boost::to_upper_copy(message).c_str(), normal);
     }
 
     bool print(bool correct, std::string message)
     {
-//        if (!correct)
-//            printf("%s%s%s\n", red, message.c_str(), normal);
-//        else
-//            printf("%s%s%s\n", green, message.c_str(), normal);
-//
+        if (!correct)
+            printf("%s%s%s", red, message.c_str(), normal);
+        else
+            printf("%s%s%s", green, message.c_str(), normal);
+
         return correct;
+    }
+
+    bool connected()
+    {
+        std::vector<std::string> listComPorts;
+        getComPorts(listComPorts, "/dev/*");
+
+        if (portNumber == -1)
+            return false;
+
+        // connected als hij gevonden werd in de lijst
+        return std::find(listComPorts.begin(), listComPorts.end(), port) != listComPorts.end();
     }
 
 public:
@@ -148,13 +166,13 @@ public:
 
     bool init(const AntSettings &settings)
     {
-        //printHeader("Opened");
+        printHeader("Opened");
 
         int newPortNumber = GetPortNum(settings.port.c_str());
 
         // poort bestaat niet
         if (newPortNumber == -1)
-            return false;
+            return print(false, "Poort bestaat niet\n");
 
         // vorige open poort eventueel eerst sluiten
         if (newPortNumber != portNumber && portNumber != -1)
@@ -167,23 +185,24 @@ public:
         if (portNumber == -1)
         {
             if (OpenComport(newPortNumber, settings.baudrate))
-                return false;
+                return print(false, "Poort kon niet worden geopend\n");
 
             portNumber = newPortNumber;
+            port = settings.port;
         }
 
         // wachten en kijken of de seriele connectie werkt
         // geen idee waarom, maar hij returnt altijd 2x CND
         for (int i = 0; i < 2; ++i)
             if (readString().find("CND") == std::string::npos)
-                return false;
+                return print(false, "Geen CND commando's ontvangen van de mier\n");
 
-        return true;
+        return print(true, "OK\n");
     }
 
     bool stop()
     {
-        printf("stop\n");
+        printHeader("stop");
 
         // commando verzenden
         std::ostringstream ss;
@@ -194,7 +213,7 @@ public:
 
     bool walk(const int32_t speed)
     {
-        printf("Walk\n");
+        printHeader("Walk");
 
         // commando verzenden
         std::ostringstream ss;
@@ -205,7 +224,7 @@ public:
 
     bool turn(const int32_t angle)
     {
-        printf("Turn\n");
+        printHeader("Turn");
 
         // commando verzenden
         std::ostringstream ss;
@@ -216,7 +235,7 @@ public:
 
     bool calibrateHeight(const int32_t height) 
     {
-        printf("calibrateHeight\n");
+        printHeader("calibrateHeight");
 
         drawHeight = height;
         moveHeight = drawHeight + 10;
@@ -230,7 +249,7 @@ public:
 
     bool draw(const std::vector<std::vector<int32_t> > &points, const int32_t width, const int32_t height)
     {
-        printf("draw\n");
+        printHeader("draw");
 
         // stuur resolutie
         std::ostringstream ss;
@@ -278,7 +297,7 @@ public:
 
     void getComPorts(std::vector<std::string> &_return, const std::string &wildcard)
     {
-        printf("getComPorts\n");
+        //printHeader("getComPorts");
 
         const std::string cmd = "ls " + wildcard;
         FILE *pipe = popen(cmd.c_str(), "r");
@@ -295,17 +314,21 @@ public:
 
     int32_t ping()
     {
-        printf("Ping\n");
+        printHeader("Ping");
 
         // controleer of de mier geconnecteerd is
-        std::vector<std::string> listComPorts;
-        getComPorts(listComPorts, "/dev/*");
-        if (std::find(listComPorts.begin(), listComPorts.end(), port) == listComPorts.end())
+        if (!connected())
+        {
+            print(false, "Mier is niet geconnecteerd of je koos de verkeerde poort\n");
             return 0; 
+        }
 
         // kijk of de mier reageert
         if (!sendCommand("PNG\n", "PNG OK"))
+        {
+            print(false, "Mier reageert niet op ping commando\n");
             return 1;
+        }
 
         // alles ok, device is connected en reageert
         return 2; 
@@ -320,19 +343,19 @@ void localTest()
 
     AntHandler ant;
     bool flag = ant.init(settings);
-    std::cout << flag << std::endl;
+    //std::cout << flag << std::endl;
 
     int ret = ant.ping();
-    std::cout << ret << std::endl;
+    //std::cout << ret << std::endl;
 
     ret = ant.walk(10);
-    std::cout << ret << std::endl;
+    //std::cout << ret << std::endl;
 
     ret = ant.stop();
-    std::cout << ret << std::endl;
+    //std::cout << ret << std::endl;
 
     ret = ant.calibrateHeight(-10);
-    std::cout << ret << std::endl;
+    //std::cout << ret << std::endl;
 
     std::vector<int32_t> line1 = {2, 3, 5, 6};
     std::vector<int32_t> line2 = {2, 3, 5, 6, 7, 8};
