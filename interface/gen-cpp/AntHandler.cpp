@@ -13,6 +13,16 @@
 
 #include "rs232.h"
 
+//#define red     "\033[0;31m"  
+//#define cyan    "\033[1;36m" 
+//#define green   "\033[4;32m"
+//#define blue    "\033[9;34m"
+//#define black   "\033[0;30m"
+//#define brown   "\033[0;33m"
+//#define magenta "\033[0;35m"
+//#define gray    "\033[0;37m"
+//#define normal  "\033[0m" 
+
 using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
@@ -107,6 +117,21 @@ private:
         return sendCommand(ss.str(), "MOV OK");
     }
 
+    void printHeader(std::string message)
+    {
+//        printf("%s%s%s\n", cyan, message.c_str(), normal);
+    }
+
+    bool print(bool correct, std::string message)
+    {
+//        if (!correct)
+//            printf("%s%s%s\n", red, message.c_str(), normal);
+//        else
+//            printf("%s%s%s\n", green, message.c_str(), normal);
+//
+        return correct;
+    }
+
 public:
     AntHandler()
     {
@@ -123,7 +148,7 @@ public:
 
     bool init(const AntSettings &settings)
     {
-        printf("Opened\n");
+        //printHeader("Opened");
 
         int newPortNumber = GetPortNum(settings.port.c_str());
 
