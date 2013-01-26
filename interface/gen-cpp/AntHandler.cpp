@@ -11,6 +11,7 @@
 #include <string>
 #include <thread>
 #include <unistd.h>
+#include <cmath>
 
 #include "rs232.h"
 
@@ -35,7 +36,8 @@ using boost::shared_ptr;
 // 1x initialisatie nodig, niet telkens opnieuw voor elke client
 static std::string port;
 static int portNumber = -1;
-static int drawHeight, moveHeight = -1;
+static int drawHeight = -10, moveHeight = 0;
+static int prev_x = 0, prev_y = 0, prev_z = 0;
 
 class AntHandler : virtual public AntIf
 {
@@ -120,6 +122,7 @@ private:
         ss << "MOV " << x << ',' << y << ',' << z << '\n';
         //std::cout << ss.str() << std::endl;
 
+	usleep(50000);
         return sendCommand(ss.str(), "MOV OK");
     }
 
@@ -189,13 +192,13 @@ public:
 
             portNumber = newPortNumber;
             port = settings.port;
-        }
 
-        // wachten en kijken of de seriele connectie werkt
-        // geen idee waarom, maar hij returnt altijd 2x CND
-        for (int i = 0; i < 2; ++i)
-            if (readString().find("CND") == std::string::npos)
-                return print(false, "Geen CND commando's ontvangen van de mier\n");
+	    // wachten en kijken of de seriele connectie werkt (optioneel)
+            // geen idee waarom, maar hij returnt altijd 2x CND
+            for (int i = 0; i < 2; ++i)
+                if (readString().find("CND") == std::string::npos)
+                    return print(true, "Warning: Geen CND commando's ontvangen van de mier\n");
+        }
 
         return print(true, "OK\n");
     }
@@ -354,13 +357,17 @@ void localTest()
     ret = ant.stop();
     //std::cout << ret << std::endl;
 
-    ret = ant.calibrateHeight(-10);
+    //ret = ant.calibrateHeight(-10);
     //std::cout << ret << std::endl;
 
-    std::vector<int32_t> line1 = {2, 3, 5, 6};
-    std::vector<int32_t> line2 = {2, 3, 5, 6, 7, 8};
+
+    drawHeight = -20;
+    moveHeight = 0;
+
+    std::vector<int32_t> line1 = {500, 500, 1000, 1000};
+    std::vector<int32_t> line2 = {0, 1000, 0, 0, 1000, 0};
     std::vector<std::vector<int32_t> > points = {line1, line2};
-    ant.draw(points, 800, 600);
+    ant.draw(points, 1000, 1000);
 }
 
 int main(int argc, char **argv)
