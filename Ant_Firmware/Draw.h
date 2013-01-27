@@ -38,7 +38,7 @@ const int pose_height = -130;
 class Draw
 {
 public:
-  Draw() : max_x(30), max_y(30), prev_x(0), prev_y(0) {}
+  Draw() : max_x(30), max_y(30), prev_x(0), prev_y(0), prev_z(0) {}
   
   void convert_coordinates(int screen_x, int screen_y, int* x, int* y);
   void deviate_from_default_pose(int x, int y, int z);
@@ -46,7 +46,7 @@ public:
 //  void set_move_height(int height) { move_height = height; }
   
 private:
-  int prev_x, prev_y;
+  int prev_x, prev_y,prev_z;
   int max_x, max_y;
   //int draw_height, move_height;
 };
