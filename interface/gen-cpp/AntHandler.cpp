@@ -6,6 +6,7 @@
 #include <thrift/transport/TBufferTransports.h>
 #include <boost/algorithm/string.hpp>
 
+#include <algorithm>
 #include <sstream>
 #include <stdio.h>
 #include <string>
@@ -125,7 +126,7 @@ private:
         if (!sendCommand(ss.str(), "MOV OK"))
 	    return false;
 
-	usleep(500000);
+	usleep(1000000);
 	return true;
     }
 
@@ -268,15 +269,18 @@ public:
     {
         printHeader("draw");
 
+	int w, h;
+	w = h = std::max(width, height);
+
         // stuur resolutie
         std::ostringstream ss;
-        ss << "DRW " << width << ',' << height << '\n';
+        ss << "DRW " << w << ',' << h << '\n';
 
         if (!sendCommand(ss.str(), "DRW OK"))
             return false;
 
         // default pose
-        if (!move(width / 2, height / 2, moveHeight))
+        if (!move(w / 2, h / 2, moveHeight))
             return false;
 
         for (const std::vector<int32_t>& line : points)
@@ -306,7 +310,7 @@ public:
         }
 
         // back to default pose
-        if (!move(width / 2, height / 2, moveHeight))
+        if (!move(w / 2, h / 2, moveHeight))
             return false;
 
         return true;
@@ -365,18 +369,17 @@ void localTest()
     int ret = ant.ping();
     //std::cout << ret << std::endl;
 
-    ret = ant.walk(10);
+    //ret = ant.walk(10);
     //std::cout << ret << std::endl;
 
-    ret = ant.stop();
+    //ret = ant.stop();
     //std::cout << ret << std::endl;
 
     //ret = ant.calibrateHeight(-10);
     //std::cout << ret << std::endl;
 
-
-    drawHeight = -20;
-    moveHeight = 0;
+    drawHeight = -15;
+    moveHeight = -5;
 
     std::vector<int32_t> line1 = {0,559,205,536,400,520,560,490,640,460,634,363,620,218,597,1};
     std::vector<int32_t> line2 = {607,80,645,0,803,0,867,69,914,95,922,221,915,243,936,405,903,411,853,371,699,367,707,453,667,455,666,375,699,367};

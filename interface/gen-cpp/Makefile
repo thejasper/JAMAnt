@@ -1,5 +1,5 @@
 # voor raspberry pi
-CC = g++-4.7 -O2 -std=c++11 -lthrift -lpthread -lboost_system -lboost_thread -DHAVE_CONFIG_H -DCONNECTED -DLOCALTEST
+CC = g++-4.7 -O2 -std=c++11 -lthrift -lpthread -lboost_system -lboost_thread -DHAVE_CONFIG_H -DCONNECTED 
 CFLAGS = -g -c -I/usr/local/include/thrift/
 # voor arch linux (m'n laptop)
 #CC = g++ -O2 -std=c++11 -lthrift -lpthread -lboost_system -lboost_thread -DHAVE_CONFIG_H -DCONNECTED
