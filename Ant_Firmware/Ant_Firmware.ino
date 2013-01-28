@@ -30,7 +30,7 @@ boolean drop_MnM = false;
 enum ant_action { WALK, TURN, PNG, DRAW, MOVE, STOP, NOTHING, HEIGHT };
  
 Draw draw;                           // alles die te maken heeft met het tekenen
-unsigned int timeout = 1 * 1000;     // langste tijd dat er tussen 2 commando's mag zitten
+unsigned int timeout = 3.1 * 1000;     // langste tijd dat er tussen 2 commando's mag zitten
 boolean in_time = false;             // geeft aan of er een timeout is of niet
 ant_action current_action = NOTHING; // huidige actie (zie declaratie enum)
 int command_parameter = 0;           // extra informatie voor de huidige actie
@@ -60,12 +60,12 @@ void setup()
   legs[LF].setSide(LEG_LEFT);
   legs[LF].setPosition(90, 58);
   
-  legs[LM].setZeroPositions(1510, 1790, 2430);
+  legs[LM].setZeroPositions(1510, 1790, 2425);
   legs[LM].setSide(LEG_LEFT);
   legs[LM].setPosition(0, 58);
   
-  // changed to 1750
-  legs[LB].setZeroPositions(1510, 1750, 2430);
+  // changed to 1750*
+  legs[LB].setZeroPositions(1510, 1810, 2430);
   legs[LB].setSide(LEG_LEFT);
   legs[LB].setPosition(-90, 58);
   
@@ -112,11 +112,6 @@ void process_communication()
 
   // commando uitvoeren 
   execute_action();
-  
-  while (Serial2.available() > 0)
-  {
-    Serial.print(Serial2.read());
-  }
 }
 
 void interpret_buffer()
@@ -160,7 +155,7 @@ void interpret_buffer()
     movepoints = buffer.substring(4);
     //Serial.println("MOV OK");
   }
-  else if (buffer.startsWith("DST")) // hoogte instellen
+  else if (buffer.startsWith("DST")) // hoogte instellen (wordt niet meer gebruikt)
   {
     current_action = HEIGHT;
     command_parameter = buffer.substring(4).toInt();
