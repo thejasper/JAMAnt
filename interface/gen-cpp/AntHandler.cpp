@@ -246,19 +246,18 @@ public:
         drawHeight = height;
         moveHeight = drawHeight + 10;
 
-        // stuur resolutie
+        // stuur resolutie zodat het centerpunt kan gevonden worden
         std::ostringstream ss;
         ss << "DRW " << 1000 << ',' << 1000 << '\n';
 
         if (!sendCommand(ss.str(), "DRW OK"))
             return false;
 
+	// zakken, even wachten en weer omhoog gaan
         if (!move(1000 / 2, 1000 / 2, height))
             return false;
-
 	for (int i=0; i<3; ++i)
 	    usleep(1000000);
-
         if (!move(1000 / 2, 1000 / 2, 0))
             return false;
 
