@@ -1,5 +1,5 @@
 namespace cpp robotics
-namespace php robotics
+//namespace php robotics
 
 struct AntSettings
 {
@@ -19,6 +19,9 @@ service Ant
 
     // angle tussen -45 en 45 graden
     bool turn(1:i32 angle),
+
+	// tekenhoogte instellen 
+    bool calibrateHeight(1:i32 height),
 
     // points zijn de x en y coordinaten van verschillende aaneensluitende lijnen
     // width en height is de resolutie van de client

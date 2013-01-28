@@ -34,7 +34,7 @@ void Draw::deviate_from_default_pose(int x, int y, int z)
   //int z = draw ? draw_height : move_height;
   
   // tussen 0 en 84 als er tussen [-30..30] gewerkt wordt
-  double dist = sqrt(sq(x-prev_x)+sq(y-prev_y)); 
+  double dist = sqrt(sq(x-prev_x)+sq(y-prev_y)+sq(z-prev_z)); 
   
   // hoe groter de afstand hoe langer het mag duren
   int duration = dist * 20;
@@ -71,4 +71,5 @@ void Draw::deviate_from_default_pose(int x, int y, int z)
                               true);               
   prev_x = x;
   prev_y = y;
+  prev_z = z;
 }

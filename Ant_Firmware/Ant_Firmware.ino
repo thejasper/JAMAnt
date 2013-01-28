@@ -30,7 +30,7 @@ boolean drop_MnM = false;
 enum ant_action { WALK, TURN, PNG, DRAW, MOVE, STOP, NOTHING, HEIGHT };
  
 Draw draw;                           // alles die te maken heeft met het tekenen
-unsigned int timeout = 2 * 1000;     // langste tijd dat er tussen 2 commando's mag zitten
+unsigned int timeout = 1 * 1000;     // langste tijd dat er tussen 2 commando's mag zitten
 boolean in_time = false;             // geeft aan of er een timeout is of niet
 ant_action current_action = NOTHING; // huidige actie (zie declaratie enum)
 int command_parameter = 0;           // extra informatie voor de huidige actie
@@ -59,25 +59,28 @@ void setup()
   legs[LF].setZeroPositions(1570, 1850, 2370);
   legs[LF].setSide(LEG_LEFT);
   legs[LF].setPosition(90, 58);
-
+  
   legs[LM].setZeroPositions(1510, 1790, 2430);
   legs[LM].setSide(LEG_LEFT);
   legs[LM].setPosition(0, 58);
-
-  legs[LB].setZeroPositions(1490, 1830, 2430);
+  
+  // changed to 1750
+  legs[LB].setZeroPositions(1510, 1750, 2430);
   legs[LB].setSide(LEG_LEFT);
   legs[LB].setPosition(-90, 58);
-
-
+  
+  
   legs[RF].setZeroPositions(1490, 1280, 680);
   legs[RF].setSide(LEG_RIGHT);
   legs[RF].setPosition(90, -58);
-
-  legs[RM].setZeroPositions(1510, 1170, 660);
+  
+  // changed to 1675
+  legs[RM].setZeroPositions(1675, 1170, 660);
   legs[RM].setSide(LEG_RIGHT);
   legs[RM].setPosition(0, -58);
-
-  legs[RB].setZeroPositions(1430, 1250, 600);
+  
+  // changed to 1175
+  legs[RB].setZeroPositions(1470, 1210, 600);
   legs[RB].setSide(LEG_RIGHT);
   legs[RB].setPosition(-90, -58);
 
@@ -109,6 +112,11 @@ void process_communication()
 
   // commando uitvoeren 
   execute_action();
+  
+  while (Serial2.available() > 0)
+  {
+    Serial.print(Serial2.read());
+  }
 }
 
 void interpret_buffer()
@@ -144,7 +152,7 @@ void interpret_buffer()
   {
     current_action = DRAW;
     coordinates = buffer.substring(4);
-    Serial.println("DRW OK");
+    //Serial.println("DRW OK");
   }
   else if (buffer.startsWith("MOV ")) // move
   {
@@ -190,6 +198,7 @@ void execute_action()
     height = get_next_number(coordinates);
     
     current_action = NOTHING;
+    Serial.println("DRW OK");
     //Serial.println("ACTUAL DRW OK");
   }
   else if (current_action == MOVE)
@@ -201,6 +210,9 @@ void execute_action()
     // scalen en moven
     draw.convert_coordinates(width, height, &x, &y);
     draw.deviate_from_default_pose(x, y, z);
+    Serial.println(x);
+    Serial.println(y);
+    Serial.println(z);
     
     current_action = NOTHING;
     Serial.println("MOV OK");
