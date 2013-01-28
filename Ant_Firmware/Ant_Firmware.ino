@@ -65,7 +65,7 @@ void setup()
   legs[LM].setPosition(0, 58);
   
   // changed to 1750*
-  legs[LB].setZeroPositions(1510, 1810, 2430);
+  legs[LB].setZeroPositions(1510, 1820, 2430);
   legs[LB].setSide(LEG_LEFT);
   legs[LB].setPosition(-90, 58);
   
@@ -75,12 +75,12 @@ void setup()
   legs[RF].setPosition(90, -58);
   
   // changed to 1675
-  legs[RM].setZeroPositions(1675, 1170, 660);
+  legs[RM].setZeroPositions(1675, 1170, 640);
   legs[RM].setSide(LEG_RIGHT);
   legs[RM].setPosition(0, -58);
   
   // changed to 1175
-  legs[RB].setZeroPositions(1470, 1210, 600);
+  legs[RB].setZeroPositions(1470, 1240, 600);
   legs[RB].setSide(LEG_RIGHT);
   legs[RB].setPosition(-90, -58);
 

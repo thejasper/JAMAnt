@@ -266,7 +266,7 @@ void move_test()
 void move_collapse()
 {
     // Reset head
-    Serial2.print("#4 P1000 #5 P1510 T200\r");
+    //Serial2.print("#4 P1000 #5 P1510 T200\r");
 
     // LF to 0° z-rotation
     legs[LF].moveToGlobalCoords(pose[LF][0], pose[LF][1], poseheight + 20, 50, true);
@@ -326,7 +326,7 @@ void move_collapse()
 void move_expand()
 {
     // Reset head
-    Serial2.print("#4 P1000 #5 P1510 T200\r");
+    //Serial2.print("#4 P1000 #5 P1510 T200\r");
 
     // Set to default collapsed position
     legs[LF].sendDegrees(0, -90, 130, 100, false);
@@ -386,7 +386,7 @@ void move_expand()
 void move_default()
 {
     // Reset head
-    Serial2.print("#4 P1000 #5 P1510 T200\r");
+    //Serial2.print("#4 P1000 #5 P1510 T200\r");
 
     // Reset legs
     legs[LF].moveToGlobalCoords(pose[LF][0], pose[LF][1], poseheight, 100, false);
@@ -406,11 +406,11 @@ void move_turn(int turn_dir, int angle, int turn_speed)
     // Turn head
     if (turn_dir == TURN_CCW)
     {
-        Serial2.print("#5 P1210 T500");
+        //Serial2.print("#5 P1210 T500");
     }
     else
     {
-        Serial2.print("#5 P1810 T500");
+        //Serial2.print("#5 P1810 T500");
     }
 
     float _sin, _cos;
@@ -484,18 +484,18 @@ void move_walk(int walk_speed, int scale, boolean drop)
     float scale_factor = (scale == 10) ? 1.0 : (scale / 10.0);
 
     // Head straight
-    Serial2.print("#5 P1510 T500");
+    //Serial2.print("#5 P1510 T500");
 
     // Drop M&Ms
     if (drop)
     {
         if (openclose)
         {
-            Serial2.print("#24 P1100 T200\r");
+            //Serial2.print("#24 P1100 T200\r");
         }
         else
         {
-            Serial2.print("#24 P1900 T200\r");
+            //Serial2.print("#24 P1900 T200\r");
         }
         openclose = openclose ? false : true;
     }
@@ -505,15 +505,15 @@ void move_walk(int walk_speed, int scale, boolean drop)
         // Jaws
         if (i == 0)
         {
-            Serial2.print("#4 P1500 T");
-            Serial2.print(walk_speed * 8);
-            Serial2.print("\r");
+            //Serial2.print("#4 P1500 T");
+            //Serial2.print(walk_speed * 8);
+            //Serial2.print("\r");
         }
         else if (i == 8)
         {
-            Serial2.print("#4 P1000 T");
-            Serial2.print(walk_speed * 8);
-            Serial2.print("\r");
+            //Serial2.print("#4 P1000 T");
+            //Serial2.print(walk_speed * 8);
+            //Serial2.print("\r");
         }
 
         // Move Tripod 1 legs to their correct positions.
