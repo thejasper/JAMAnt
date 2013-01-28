@@ -122,8 +122,11 @@ private:
         ss << "MOV " << x << ',' << y << ',' << z << '\n';
         //std::cout << ss.str() << std::endl;
 
-	usleep(50000);
-        return sendCommand(ss.str(), "MOV OK");
+        if (!sendCommand(ss.str(), "MOV OK"))
+	    return false;
+
+	usleep(500000);
+	return true;
     }
 
     void printHeader(std::string message)
@@ -243,11 +246,22 @@ public:
         drawHeight = height;
         moveHeight = drawHeight + 10;
 
-        // commando verzenden
+        // stuur resolutie zodat het centerpunt kan gevonden worden
         std::ostringstream ss;
-        ss << "DST " << height << '\n';
+        ss << "DRW " << 1000 << ',' << 1000 << '\n';
 
-        return sendCommand(ss.str(), "DST OK");
+        if (!sendCommand(ss.str(), "DRW OK"))
+            return false;
+
+	// zakken, even wachten en weer omhoog gaan
+        if (!move(1000 / 2, 1000 / 2, height))
+            return false;
+	for (int i=0; i<3; ++i)
+	    usleep(1000000);
+        if (!move(1000 / 2, 1000 / 2, 0))
+            return false;
+
+	return true;
     }
 
     bool draw(const std::vector<std::vector<int32_t> > &points, const int32_t width, const int32_t height)
@@ -262,7 +276,7 @@ public:
             return false;
 
         // default pose
-        if (!move(0, 0, moveHeight))
+        if (!move(width / 2, height / 2, moveHeight))
             return false;
 
         for (const std::vector<int32_t>& line : points)
@@ -292,7 +306,7 @@ public:
         }
 
         // back to default pose
-        if (!move(0, 0, moveHeight))
+        if (!move(width / 2, height / 2, moveHeight))
             return false;
 
         return true;
