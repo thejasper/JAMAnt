@@ -378,10 +378,12 @@ void localTest()
     drawHeight = -20;
     moveHeight = 0;
 
-    std::vector<int32_t> line1 = {500, 500, 1000, 1000};
-    std::vector<int32_t> line2 = {0, 1000, 0, 0, 1000, 0};
-    std::vector<std::vector<int32_t> > points = {line1, line2};
-    ant.draw(points, 1000, 1000);
+    std::vector<int32_t> line1 = {0,559,205,536,400,520,560,490,640,460,634,363,620,218,597,1};
+    std::vector<int32_t> line2 = {607,80,645,0,803,0,867,69,914,95,922,221,915,243,936,405,903,411,853,371,699,367,707,453,667,455,666,375,699,367};
+    std::vector<int32_t> line3 = {610,109,744,77,840,71,906,88};
+
+    std::vector<std::vector<int32_t> > points = {line1, line2, line3}; // verzamelen
+    ant.draw(points, 983, 983); // doorsturen
 }
 
 int main(int argc, char **argv)
